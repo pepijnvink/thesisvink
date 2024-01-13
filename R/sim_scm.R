@@ -16,7 +16,7 @@
 #'@param varC Atomic vector with length=2 specifying the variances of the confounders.
 #'@param seed Optional argument specifying the seed to use before resampling.
 
-#' @returns An ndat x 1 dataset with ndat nested simulated datasets, each of size N x (timepoints+burnin+3).
+#' @returns An object of class {.cls ThesisSimData}. It is a list that includes the parameters set for the analysis and a ndat x 1 dataset with ndat nested simulated datasets, each of size N x (timepoints+burnin+3).
 #' @examples
 #' \dontrun{
 #' # set phi matrix
@@ -81,6 +81,7 @@ sim_scm <- function(timepoints = 5,
                     varC = c(1,1),
                     seed = NULL
 ){
+  options(cli.progress_show_after = 0)
   if (!is.null(betac2) & is.null(time_beta_change)){
     cli::cli_abort(c("The function does not know when to change the effect of the confounders.",
                      "i" = "Please provide a time for the new effects."))
@@ -98,15 +99,15 @@ sim_scm <- function(timepoints = 5,
                                                        .y = x,
                                                        .f = paste0)) %>%
     unlist() %>%
-    c("ID", ., "C1", "C2")
-  datas <- tibble::tibble(data = rep(NA, ndat))
+    c("ID", .data, "C1", "C2")
+  datas <- vector(mode='list', length = ndat)
+  cli::cli_progress_bar("Simulating datasets", total = ndat)
   for (i in 1:ndat){
     # dataset i
     tab <- matrix(nrow=N,ncol=2*tot_timepoints)
 
     # values on confounders
     c <- MASS::mvrnorm(n = N, mu = meanc, Sigma = diag(varC))
-
     for (j in 1:N){
       # datamatrix for person j
       mat <- matrix(NA,
@@ -129,14 +130,20 @@ sim_scm <- function(timepoints = 5,
       tab[j, ] <- c(mat)
     }
     # add ID and confounder values
+    suppressWarnings({
     tab <- cbind(1:N, tab, c) %>%
       tibble::as_tibble()
+    })
     # nest dataset
-    datas[i, ] <- tidyr::nest(tab)
+    datas[[i]] <- tab
+    cli::cli_progress_update()
   }
   # set variable names
-  datas$data <- purrr::map(datas$data,
-                           purrr::set_names,
-                           variable.names)
-  return(datas)
+  datas <- purrr::map(datas,
+                      purrr::set_names,
+                      variable.names)
+  datasets <- list(parameters = rlang::fn_fmls(),
+                   datasets = datas)
+  class(datasets) <- "ThesisSimData"
+  return(datasets)
 }
