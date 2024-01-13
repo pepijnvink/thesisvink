@@ -3,8 +3,8 @@
 
 # thesisvink
 
-The goal of the thesisvink is to simulate and analyze data used for my
-Research Report.
+The goal of the thesisvink package is to simulate and analyze data used
+for my Research Report.
 
 ## Installation
 
