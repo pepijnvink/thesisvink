@@ -1,0 +1,82 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# thesisvink
+
+The goal of the thesisvink is to simulate and analyze data used for my Research Report.
+
+## Installation
+
+You can install the development version of thesisvink from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("pepijnvink/thesisvink")
+```
+
+## Example
+
+This is a basic example which shows you how to solve a common problem:
+
+```{r example, eval=FALSE}
+library(thesisvink)
+## basic example code
+# set phi matrix
+phixx <- 0.2
+phixy <- 0.15
+phiyy <- 0.30
+phiyx <- 0.10
+phi <- matrix(c(phixx, phixy,
+                phiyx, phiyy),
+              nrow = 2,
+              byrow=T)
+
+# speciy residual variances
+psix <- 1
+psiy <- 1
+psixy <- c(psix, psiy)
+
+# specify variances of confounders
+psic1 <- 1
+psic2 <- 1
+psic <- c(psic1, psic2)
+# specify effects of confounders
+betaxc1 <- 0.3
+betaxc2 <- 0.8
+
+betayc1 <- 0.5
+betayc2 <- 0.2
+
+# put in matrix
+betac_1 <- matrix(c(betaxc1, betaxc2,
+                    betayc1, betayc2),
+                  nrow = 2,
+                  byrow = T)
+
+data <- sim_scm(
+  timepoints = 5,
+  burnin = 5,
+  N = 500,
+  ndat = 10,
+  phi = phi,
+  betac = betac_1,
+  betac2 = NULLL,
+  time_beta_change = NULL,
+  psi = psixy,
+  intercepts = c(0,0),
+  meanc = c(0,0),
+  varC = c(0,0),
+  seed = 42)
+```
