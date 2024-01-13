@@ -32,26 +32,11 @@ betac_1 <- matrix(c(betaxc1, betaxc2,
                   nrow = 2,
                   byrow = T)
 
-test_that("Check data types", {
-  expect_s3_class(sim_scm(
-    timepoints = 5,
-    burnin = 5,
-    N = 10,
-    ndat=5,
-    phi = phi,
-    betac = betac_1,
-    betac2 = NULL,
-    time_beta_change = NULL,
-    psi = psixy,
-    intercepts = c(0,0),
-    meanc = c(0,0),
-    varC = c(0,0),
-    seed = 42), "ThesisSimData")
-expect_s3_class(sim_scm(
+dat_test <- sim_scm(
   timepoints = 5,
   burnin = 5,
-  N = 10,
-  ndat=5,
+  N = 500,
+  ndat=2,
   phi = phi,
   betac = betac_1,
   betac2 = NULL,
@@ -60,5 +45,13 @@ expect_s3_class(sim_scm(
   intercepts = c(0,0),
   meanc = c(0,0),
   varC = c(0,0),
-  seed = 42)$datasets[[1]], "data.frame")
+  seed = 42)
+
+future::plan("future::multisession")
+
+test_that("Check Data Type", {
+  expect_type(analyze_sim(dat_test), "list")
+})
+test_that("Check only input of class ThesisSimData", {
+  expect_error(analyze_sim(betac_1))
 })

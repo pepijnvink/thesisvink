@@ -48,7 +48,7 @@ sim_scm(
 \item{seed}{Optional argument specifying the seed to use before resampling.}
 }
 \value{
-An ndat x 1 dataset with ndat nested simulated datasets, each of size N x (timepoints+burnin+3).
+An object of class {.cls ThesisSimData}. It is a list that includes the parameters set for the analysis and a ndat x 1 dataset with ndat nested simulated datasets, each of size N x (timepoints+burnin+3).
 }
 \description{
 Simulate data from a Structural Causal Model (SCM) used in the research report. It uses 2 confounders and allows for one change in confounder effects.
