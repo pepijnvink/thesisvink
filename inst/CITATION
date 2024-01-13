@@ -1,0 +1,10 @@
+citHeader("To cite thesisvink in publications use:")
+
+citEntry(
+  entry  = "Manual",
+  title    = "pepijnvink/thesisvink: Version 0.1.0 - First Release",
+  author   = " Pepijn Vink",
+  year     = "2023",
+  doi      = "10.5281/zenodo.10500677"
+  url = "https://github.com/pepijnvink/thesisvink"
+)
